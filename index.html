@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Parcelas - JuninCell</title>
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: #111111;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px #00e676;
+            margin-top: 30px;
+        }
+        h1 {
+            color: #00e676;
+            font-size: 26px;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #00e676;
+            font-size: 16px;
+        }
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #00e676;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #00e676;
+        }
+        th {
+            background-color: #00e676;
+            color: #000;
+        }
+        #resultado {
+            margin-top: 20px;
+        }
+        img {
+            width: 150px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <img src="logo.png" alt="Logo JuninCell">
+        <h1>Calculadora JuninCell</h1>
+
+        <label for="valor">Valor da Compra (R$):</label>
+        <input type="number" id="valor" placeholder="Digite o valor">
+
+        <button onclick="calcular()">Calcular</button>
+        <div id="resultado"></div>
+        <button onclick="copiarTabela()">Copiar Tabela</button>
+    </div>
+
+    <script>
+        function calcular() {
+            var valor = parseFloat(document.getElementById('valor').value);
+            var resultadoHTML = `
+            <table>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Parcela</th>
+                    <th>Total</th>
+                </tr>`;
+
+            // Débito
+            var debitoTotal = valor + (valor * 1.85 / 100);
+            resultadoHTML += `
+                <tr>
+                    <td>Débito</td>
+                    <td>-</td>
+                    <td>R$ ${debitoTotal.toFixed(2)}</td>
+                </tr>`;
+
+            // Crédito 1x
+            var credito1xTotal = valor + (valor * 3.79 / 100);
+            resultadoHTML += `
+                <tr>
+                    <td>Crédito 1x</td>
+                    <td>R$ ${credito1xTotal.toFixed(2)}</td>
+                    <td>R$ ${credito1xTotal.toFixed(2)}</td>
+                </tr>`;
+
+            // Parcelado de 2x até 12x
+            for (var i = 2; i <= 12; i++) {
+                var taxaParcelado = i * 1.5;
+                var valorFinal = valor + (valor * taxaParcelado / 100);
+                var valorParcela = valorFinal / i;
+
+                resultadoHTML += `
+                    <tr>
+                        <td>${i}x</td>
+                        <td>R$ ${valorParcela.toFixed(2)}</td>
+                        <td>R$ ${valorFinal.toFixed(2)}</td>
+                    </tr>`;
+            }
+
+            resultadoHTML += `</table>`;
+
+            document.getElementById('resultado').innerHTML = resultadoHTML;
+        }
+
+        function copiarTabela() {
+            var tabela = document.getElementById('resultado').innerText;
+            navigator.clipboard.writeText(tabela).then(function() {
+                alert('Tabela copiada com sucesso!');
+            }, function(err) {
+                alert('Erro ao copiar tabela.');
+            });
+        }
+    </script>
+
+</body>
+</html>
